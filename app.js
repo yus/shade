@@ -114,9 +114,9 @@ document.getElementById("generate-pdf").addEventListener("click", async () => {
 
 // Temporary test - add this at the end of app.js
 async function testWithSampleImage() {
-  const response = await fetch('https://via.placeholder.com/200/ff0000/ffffff');
+  const response = await fetch('https://github.com/yus/yus.github.io/blob/master/images');
   const blob = await response.blob();
-  const file = new File([blob], 'test.png', { type: 'image/png' });
+  const file = new File([blob], 'yus143.png', { type: 'image/png' });
   
   // Simulate click with test file
   document.getElementById('image-upload').files = [file];
