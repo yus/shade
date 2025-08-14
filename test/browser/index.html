@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shade Browser Test</title>
+  <script src="../../dist/shade.umd.js"></script>
+</head>
+<body>
+  <h1>Shade Browser Test</h1>
+  <script>
+    // Simple test
+    console.log("RGB to Hex Test:", Shade.rgbToHex([255, 0, 0]));
+    
+    // Image processing test
+    const canvas = document.createElement('canvas');
+    canvas.width = 100;
+    canvas.height = 100;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'red';
+    ctx.fillRect(0, 0, 50, 100);
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(50, 0, 50, 100);
+    
+    const palette = Shade.extractPalette(
+      ctx.getImageData(0, 0, 100, 100)
+    );
+    console.log("Extracted Palette:", palette);
+  </script>
+</body>
+</html>
