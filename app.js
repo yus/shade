@@ -9,19 +9,43 @@ function loadImage(file) {
 }
 
 // Helper: Get image data for quantize.js
+// Replace the getImageData function with this:
 function getImageData(img) {
   const canvas = document.createElement("canvas");
-  canvas.width = Math.min(img.width, 200); // Limit size for performance
-  canvas.height = Math.min(img.height, 200);
   const ctx = canvas.getContext("2d");
+  canvas.width = Math.min(img.width, 200);
+  canvas.height = Math.min(img.height, 200);
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  return ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+  
+  // Get pixel data and reformat for quantize
+  const pixelData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+  const formattedData = [];
+  
+  for (let i = 0; i < pixelData.length; i += 4) {
+    formattedData.push([pixelData[i], pixelData[i+1], pixelData[i+2]]);
+  }
+  
+  return formattedData;
 }
 
 // Main: Extract color palette
+// Update the extractPalette function to:
 async function extractPalette(file) {
-  const image = await loadImage(file);
-  return quantize(getImageData(image), 5).palette(); // 5 colors max
+  try {
+    const image = await loadImage(file);
+    const imageData = getImageData(image);
+    
+    // Handle cases where quantize might fail
+    if (!imageData || imageData.length === 0) {
+      throw new Error("Couldn't extract image data");
+    }
+    
+    const palette = quantize(imageData, 5).palette();
+    return palette;
+  } catch (error) {
+    console.error("Extraction error:", error);
+    throw error;
+  }
 }
 
 // Main: Generate PDF
