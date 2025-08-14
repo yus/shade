@@ -13,9 +13,29 @@
 </head>
 <body>
   <h1>🎨 shade</h1>
+  <div id="upload-section">
   <input type="file" id="image-upload" accept="image/*">
-  <button id="generate-pdf">Generate PDF</button>
-  <div id="palette-preview"></div>
+  <button id="analyze-btn">Analyze Image</button>
+</div>
+
+<div id="preview-section" style="display:none;">
+  <div class="image-grid">
+    <div>
+      <h3>Original Image</h3>
+      <img id="original-preview" style="max-width:300px;">
+    </div>
+    <div>
+      <h3>Color Palette</h3>
+      <div id="palette-preview"></div>
+    </div>
+  </div>
+  <button id="generate-story-btn">Generate Color Story</button>
+</div>
+
+<div id="story-section" style="display:none;">
+  <div id="color-story"></div>
+  <button id="download-pdf-btn">Download PDF</button>
+</div>
   <script src="app.js"></script>
 </body>
 </html>
