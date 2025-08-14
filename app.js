@@ -39,6 +39,24 @@ async function extractPalette(file) {
   }
 }
 
+function getDominantColors(imageData, colorCount = 5) {
+  // Convert to LAB color space for better perception
+  const pixels = rgbToLab(imageData);
+  const kmeans = new KMeans(pixels, colorCount);
+  return kmeans.clusters.map(cluster => {
+    return labToRgb(cluster.centroid);
+  });
+}
+
+// Helper conversion functions
+function rgbToLab(rgbData) {
+  // Implementation using d3-color or similar
+  return rgbData.map(pixel => {
+    const lab = d3.lab(d3.rgb(pixel[0], pixel[1], pixel[2]));
+    return [lab.l, lab.a, lab.b];
+  });
+}
+
 async function generatePDF(palette) {
   const { PDFDocument, rgb } = PDFLib;
   const pdfDoc = await PDFDocument.create();
