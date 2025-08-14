@@ -13,6 +13,28 @@ body {
   margin: 20px 0;
 }
 
+#preview-section {
+  transition: opacity 0.3s ease;
+}
+
+.color-box {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  margin: 10px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.color-box span {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-family: monospace;
+}
+
 .color-box {
   width: 80px;
   height: 80px;
