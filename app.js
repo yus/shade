@@ -101,19 +101,62 @@ function generatePDF(palette, story) {
   return pdf;
 }
 
-document.getElementById("analyze-btn").addEventListener("click", async () => {
-  const file = document.getElementById("image-upload").files[0];
-  const img = await loadImage(file);
-  
-  // Show previews
-  document.getElementById("original-preview").src = URL.createObjectURL(file);
-  document.getElementById("upload-section").style.display = "none";
-  document.getElementById("preview-section").style.display = "block";
-  
-  // Process colors
-  const palette = await extractPalette(img);
-  renderPalette(palette);
+// Add this to app.js
+document.getElementById("analyze-btn").addEventListener("click", async function() {
+  const fileInput = document.getElementById("image-upload");
+  if (!fileInput.files.length) {
+    alert("Please upload an image first!");
+    return;
+  }
+
+  // Show loading state
+  this.disabled = true;
+  this.textContent = "Analyzing...";
+
+  try {
+    const file = fileInput.files[0];
+    const img = await loadImage(file);
+    
+    // Display original image
+    const originalPreview = document.getElementById("original-preview");
+    originalPreview.src = URL.createObjectURL(file);
+    originalPreview.onload = () => {
+      URL.revokeObjectURL(originalPreview.src); // Free memory
+    };
+
+    // Process and display palette
+    const palette = await extractPalette(img);
+    renderPalette(palette);
+
+    // Switch UI sections
+    document.getElementById("upload-section").style.display = "none";
+    document.getElementById("preview-section").style.display = "block";
+  } catch (error) {
+    console.error("Analysis failed:", error);
+    alert("Analysis failed. Please try another image.");
+  } finally {
+    this.disabled = false;
+    this.textContent = "Analyze Image";
+  }
 });
+
+// Helper function to render palette
+function renderPalette(palette) {
+  const container = document.getElementById("palette-preview");
+  container.innerHTML = "";
+  
+  palette.forEach(color => {
+    const colorBox = document.createElement("div");
+    colorBox.className = "color-box";
+    colorBox.style.backgroundColor = `rgb(${color.join(",")})`;
+    
+    const hexCode = document.createElement("span");
+    hexCode.textContent = `#${color.map(v => v.toString(16).padStart(2, '0')).join('')}`;
+    
+    colorBox.appendChild(hexCode);
+    container.appendChild(colorBox);
+  });
+}
 
 document.getElementById("generate-story-btn").addEventListener("click", async () => {
   const story = await generateColorStory(currentPalette);
