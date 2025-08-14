@@ -57,6 +57,31 @@ function rgbToLab(rgbData) {
   });
 }
 
+async function generateColorStory(palette) {
+  const colorsHex = palette.map(c => 
+    `#${c.map(v => v.toString(16).padStart(2,'0').join('')}`
+  );
+  
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${API_KEY}`
+    },
+    body: JSON.stringify({
+      model: "gpt-4-turbo",
+      messages: [{
+        role: "user",
+        content: `Create a 100-word creative description about this color palette: ${colorsHex.join(', ')}. 
+        Include emotional associations and design suggestions.`
+      }]
+    })
+  });
+  
+  const data = await response.json();
+  return data.choices[0].message.content;
+}
+
 async function generatePDF(palette) {
   const { PDFDocument, rgb } = PDFLib;
   const pdfDoc = await PDFDocument.create();
