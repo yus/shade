@@ -104,17 +104,23 @@ async function generatePDF(palette) {
   return await pdfDoc.save();
 }
 
-document.getElementById("generate-pdf").addEventListener("click", async () => {
-  try {
-    const file = document.getElementById("image-upload").files[0];
-    if (!file) return alert("Please upload an image first!");
-    
-    const palette = await extractPalette(file);
-    const pdfBytes = await generatePDF(palette);
-    
-    download(new Blob([pdfBytes]), "shade-palette.pdf");
-  } catch (e) {
-    console.error("Full generation error:", e);
-    alert("Generation failed. Please try a different image format (JPG/PNG).");
-  }
+document.getElementById("analyze-btn").addEventListener("click", async () => {
+  const file = document.getElementById("image-upload").files[0];
+  const img = await loadImage(file);
+  
+  // Show previews
+  document.getElementById("original-preview").src = URL.createObjectURL(file);
+  document.getElementById("upload-section").style.display = "none";
+  document.getElementById("preview-section").style.display = "block";
+  
+  // Process colors
+  const palette = await extractPalette(img);
+  renderPalette(palette);
+});
+
+document.getElementById("generate-story-btn").addEventListener("click", async () => {
+  const story = await generateColorStory(currentPalette);
+  document.getElementById("color-story").innerHTML = story;
+  document.getElementById("preview-section").style.display = "none";
+  document.getElementById("story-section").style.display = "block";
 });
