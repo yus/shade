@@ -32,18 +32,25 @@ function getImageData(img) {
 // Update the extractPalette function to:
 async function extractPalette(file) {
   try {
+    console.log("Loading image...");
     const image = await loadImage(file);
-    const imageData = getImageData(image);
+    console.log("Image loaded, dimensions:", image.width, "x", image.height);
     
-    // Handle cases where quantize might fail
+    console.log("Getting image data...");
+    const imageData = getImageData(image);
+    console.log("Image data length:", imageData.length);
+    
     if (!imageData || imageData.length === 0) {
-      throw new Error("Couldn't extract image data");
+      throw new Error("Empty image data");
     }
     
+    console.log("Quantizing colors...");
     const palette = quantize(imageData, 5).palette();
+    console.log("Palette generated:", palette);
+    
     return palette;
   } catch (error) {
-    console.error("Extraction error:", error);
+    console.error("Error in extractPalette:", error);
     throw error;
   }
 }
@@ -81,17 +88,41 @@ async function generatePDF(palette) {
 
 // ===== UI Integration =====
 document.getElementById("generate-pdf").addEventListener("click", async () => {
+  console.log("Generate PDF button clicked"); // Debug log 1
+  
   const file = document.getElementById("image-upload").files[0];
-  if (!file) return alert("Please upload an image first!");
+  if (!file) {
+    console.log("No file selected"); // Debug log 2
+    return alert("Please upload an image first!");
+  }
 
   try {
+    console.log("Starting palette extraction"); // Debug log 3
     const palette = await extractPalette(file);
-    const pdfBytes = await generatePDF(palette);
+    console.log("Palette extracted:", palette); // Debug log 4
     
-    // Download PDF
+    console.log("Starting PDF generation"); // Debug log 5
+    const pdfBytes = await generatePDF(palette);
+    console.log("PDF generated successfully"); // Debug log 6
+    
     download(new Blob([pdfBytes]), "shade-palette.pdf", "application/pdf");
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Full error details:", error); // Debug log 7
     alert("Failed to generate PDF. Please try another image.");
   }
 });
+
+// Temporary test - add this at the end of app.js
+async function testWithSampleImage() {
+  const response = await fetch('https://via.placeholder.com/200/ff0000/ffffff');
+  const blob = await response.blob();
+  const file = new File([blob], 'test.png', { type: 'image/png' });
+  
+  // Simulate click with test file
+  document.getElementById('image-upload').files = [file];
+  document.getElementById("generate-pdf").click();
+}
+
+// Run test after 3 seconds
+setTimeout(testWithSampleImage, 3000);
+
