@@ -1,0 +1,13 @@
+// package.json
+{
+  "name": "shade",
+  "version": "1.0.0",
+  "main": "dist/shade.js",
+  "exports": {
+    ".": "./dist/shade.js",
+    "./color": "./src/color.js"
+  },
+  "scripts": {
+    "build": "webpack --config webpack.config.js"
+  }
+}
